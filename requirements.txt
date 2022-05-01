@@ -1,0 +1,6 @@
+torch==1.9.0+cu102
+torchvision==0.10.0+cu102
+scipy==1.4.1
+scikit-learn==0.20.2
+tqdm
+sklearn

@@ -274,6 +274,32 @@ def multilabel_categorical_crossentropy(y_true, y_pred):
     pos_loss = torch.logsumexp(y_pred_pos, dim=-1)
     return neg_loss + pos_loss
 
+def multilabel_categorical_crossentropy2(y_true, y_pred):
+    """多标签分类的交叉熵
+    说明：
+        1. y_true和y_pred的shape一致，y_true的元素是，
+           0～1的数，表示当前类是目标类的概率；
+        2. 请保证y_pred的值域是全体实数，换言之一般情况下
+           y_pred不用加激活函数，尤其是不能加sigmoid或者
+           softmax；
+        3. 预测阶段则输出y_pred大于0的类；
+        4. 详情请看：https://kexue.fm/archives/7359 和
+           https://kexue.fm/archives/9064 。
+    """
+    n_mask = torch.less_equal(y_true, 1 - 1e-16)
+    p_mask = torch.greater_equal(y_true, 1 - 1e-16)
+    y_true = torch.clip(y_true, 1e-16, 1 - 1e-16)
+    infs = torch.zeros_like(y_pred) + 1e12
+    # infs = torch.ones_like(zeros)*np.nan
+    y_neg = torch.where(n_mask, y_pred, -infs) + torch.log(1 - y_true)
+    y_pos = torch.where(p_mask, -y_pred, -infs) + torch.log(y_true)
+    zeros = torch.zeros_like(y_pred[..., :1])
+    y_neg = torch.cat([y_neg, zeros], dim=-1)
+    y_pos = torch.cat([y_pos, zeros], dim=-1)
+    neg_loss = torch.logsumexp(y_neg, dim=-1)
+    pos_loss = torch.logsumexp(y_pos, dim=-1)
+    return neg_loss + pos_loss
+
 
 def global_pointer_crossentropy(y_true, y_pred):
     """给GlobalPointer设计的交叉熵

@@ -478,6 +478,77 @@ def predict(p_data):
         fw.write('\n')
     return ''
 
+def predict2(p_data):
+    """评测函数
+    """
+    res = []
+    fw = open(submit_name, 'w', encoding='utf-8')
+    model.eval()
+    for d in tqdm(p_data, ncols=100):
+        R = set(NER.recognize(model, d[0]))
+        res.append(R)
+    for text, r in zip(p_data, res):
+        labels = ['O'] * len(text[0])
+        scores = [0] * len(text[0])
+        for t in r:
+            print(t)
+            scores[t[1]:t[2]+1] = ['{:.6f}'.format(t[3])] * (t[2] - t[1]+1)
+            print(t, scores)
+            labels[t[1]] = 'B-' + t[0]
+            labels[t[1] + 1:t[2] + 1] = ['I-' + t[0]] * (t[2] - t[1])
+        assert len(text[0]) == len(labels)
+        for w, l, s in zip(text[0], labels, scores):
+            fw.write(w + ' ' + l + ' ' + str(s) + '\n')
+        fw.write('\n')
+    return ''
+
+def load_data2(filename):
+    """
+    :param filename:  data path
+    :return: [(text,[type, start_index, end_index),(......)]
+    """
+    data = []
+    with open(filename, 'r', encoding='utf-8') as f:
+        words = []
+        labels = []
+        scores = []
+        for line in f:
+            if line == "\n":
+                if words:
+                    labels = get_entity_bio(labels)
+                    words = words[:maxlen]
+                    n_labels = []
+                    for l in labels:
+                        n_labels.append((l[0], l[1], l[2], scores[l[1]]))
+                    data.append((''.join(words), n_labels))
+                    # data.append((words, labels))
+                    words = []
+                    labels = []
+                    scores = []
+            else:
+                splits = line.split(" ")
+                word = splits[0].replace("\n", "")
+                if word == '':
+                    word = ' '
+                words.append(word)
+                if len(splits) > 2:
+                    labels.append(splits[-2].replace("\n", ""))
+                    scores.append(splits[-1].replace("\n", ""))
+                else:  # Examples could have no label for mode = "test"
+                    labels.append("O")
+                    scores.append(splits[-1].replace("\n", ""))
+
+        if words:
+            words = words[:maxlen]
+            labels = get_entity_bio(labels)
+            n_labels = []
+            for l in labels:
+                n_labels.append((l[0], l[1], l[2], scores[l[1]]))
+            data.append((''.join(words), n_labels))
+            # data.append((words, labels))
+    return data
+
+
 
 if __name__ == '__main__':
     epochs = 15

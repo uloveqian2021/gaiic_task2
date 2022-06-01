@@ -1,6 +1,7 @@
 # 代码说明
-uloveqian团队提交代码说明
+2022全球人工智能技术创新大赛—算法挑战赛-商品标题实体识别
 
+复赛成绩81.1(没有太多精力投入，只能这样了）
 
 ## 环境配置
 默认是python3.7
@@ -33,7 +34,7 @@ uloveqian团队提交代码说明
 ## 训练流程
 对train.sh每一步进行描述，或者在train.sh中对每一步添加注释
 python code/run_pretrain.py      采用无标签数据＋训练集＋testa 基于macbert继续训练了100 epoch
-python code/jd_ner_cv.py 　　     基于上一步训练的模型进行１０折交叉验证生成无标注数据上的伪标签
+python code/jd_ner_cv.py 　　     基于上一步训练的模型进行10折交叉验证生成无标注数据上的伪标签
 python code/postprocess.py        利用投票的方式进行融合
 python code/jd_ner_cv_testa.py 　　生成testa数据上的伪标签
 python code/postprocess_testa.py

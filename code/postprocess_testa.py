@@ -5,14 +5,7 @@
 @IDE    :PyCharm
 @document   :postprocess.py
 """
-# -*- coding:utf-8 -*-
-"""
-@author : wang bq
-@email  : wangbingqian@boe.com.cn
-@time   :22-4-13 上午8:45
-@IDE    :PyCharm
-@document   :pseudo_label_process.py
-"""
+
 from my_utils.util import get_entity_bio
 maxlen = 128
 

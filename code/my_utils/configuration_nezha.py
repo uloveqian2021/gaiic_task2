@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 """
 @author : wang bq
-@email  : wangbingqian@boe.com.cn
+@email  : 
 @time   :22-3-29 下午7:17
 @IDE    :PyCharm
 @document   :configuration_nezha.py
